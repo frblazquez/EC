@@ -1,0 +1,109 @@
+%   Copyright © 2019
+%
+% Francisco Javier Blázquez Martínez ~ frblazqu@ucm.es
+% 
+% Double degree in Mathematics-Computer engineering
+% Complutense University, Madrid
+
+\documentclass[12pt]{article}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[spanish]{babel}     %Castellanización
+\usepackage[T1]{fontenc}        %Escribe lo del teclado
+\usepackage[utf8]{inputenc}     %Reconoce algunos símbolos
+\usepackage{lmodern}            %optimiza algunas fuentes
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{hyperref} % Uso de links
+ 
+
+\newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
+
+%--------------------------------------------------------------------------
+%   PARA INCLUIR CÓDIGO C++ EN EL DOCUMENTO
+%--------------------------------------------------------------------------
+\usepackage{color}
+\definecolor{gray97}{gray}{.97}
+\definecolor{gray75}{gray}{.75}
+\definecolor{gray45}{gray}{.45}
+
+\usepackage{listings}
+\lstset{ frame=Ltb,
+framerule=0pt,
+aboveskip=0.5cm,
+framextopmargin=3pt,
+framexbottommargin=3pt,
+framexleftmargin=0.4cm,
+framesep=0pt,
+rulesep=.4pt,
+backgroundcolor=\color{gray97},
+rulesepcolor=\color{black},
+%
+stringstyle=\ttfamily,
+showstringspaces = false,
+basicstyle=\small\ttfamily,
+commentstyle=\color{gray45},
+keywordstyle=\bfseries,
+%
+numbers=left,
+numbersep=15pt,
+numberstyle=\tiny,
+numberfirstline = false,
+breaklines=true,
+}
+
+% minimizar fragmentado de listados
+\lstnewenvironment{listing}[1][]
+{\lstset{#1}\pagebreak[0]}{\pagebreak[0]}
+
+\lstdefinestyle{consola}
+{basicstyle=\scriptsize\bf\ttfamily,
+backgroundcolor=\color{gray75},
+}
+
+\lstdefinestyle{C}
+{language=C,
+}
+
+%--------------------------------------------------------------------------
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+\title{\textbf{Práctica 1} \\ 
+       \large Estructuras de Computadores}
+\author{Francisco Javier Blázquez Martínez}
+\maketitle
+
+\section{Conceptos preliminares}
+
+\section{Script de enlazado}
+
+\section{Variables enteras}
+
+\section{Variables tipo carácter}
+
+\section{Variables en punto flotante}
+
+\section{Aritmética entera}
+
+\section{Aritmética en coma flotante}
+
+\section{Conversión de tipos}
+
+\section{Tipos definidos}
+
+
+
+
+% --------------------------------------------------------------
+%     You don't have to mess with anything below this line.
+% --------------------------------------------------------------
+ 
+\end{document}
