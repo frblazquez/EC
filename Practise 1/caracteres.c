@@ -13,19 +13,20 @@
  * code to assembly.
  */
 
-char x;
-char y;
+char x;		// 1 Byte - Global variable 0x0C000000
+char y;		// 1 Byte - Global variable 0x0C000001
 
-int main() 
+int main()
 {
-  char a;
-   
+  char a;   // 1 Byte - Local variable 0x0c7FEFF
+
  // Comprobar lo que se almacena en cada caso
  // y lo que se representaría por pantalla
  // si se imprimiesen como caracteres
-  x = 'a'; 
-  y = x + 3; 
-  a = x - 32; 
 
-  return 0; 
+  x = 'a';		// x ~ 'a'
+  y = x + 3;	// y ~ 'd'
+  a = x - 32;	// a ~ 'A'
+
+  return 0;
 }

@@ -13,17 +13,14 @@
  * code to assembly.
  */
 
-int x; 		// 4 bytes - Global variable 0x0C000000
-short y;	// 2 bytes - Global variable 0x0C000006
-char z; 	// 1 byte  - Global variable 0x0C000004
+int x;    // 4 bytes - Global variable 0x0C000000
+short y;  // 2 bytes - Global variable 0x0C000006
+char z;   // 1 byte  - Global variable 0x0C000004
 
 int main()
 {
-  unsigned short a,b; // 2 bytes - 0x0000007EE 0x000007EC
+  unsigned short a,b; // 2x2 bytes - 0x0000007EE 0x000007EC
 
-  // representacion de enteros (4,2 y 1 byte)
-  // Comprobar direcciones de cada uno
-  // Comprobar endiannes y tamaño
   x = 3;
   y = -1;
   z = 129;
@@ -32,3 +29,4 @@ int main()
 
   return 0;
 }
+
