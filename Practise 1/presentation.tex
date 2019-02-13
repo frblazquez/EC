@@ -18,7 +18,9 @@
 \usepackage{graphicx}
 \graphicspath{ {images/} }
 \usepackage{hyperref} % Uso de links
- 
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0cm}
 
 \newenvironment{solution}{\begin{proof}[Solution]}{\end{proof}}
 
@@ -81,9 +83,90 @@ backgroundcolor=\color{gray75},
 \author{Francisco Javier Blázquez Martínez}
 \maketitle
 
+\setlength{\parskip}{\baselineskip}
+
 \section{Conceptos preliminares}
 
-\section{Script de enlazado}
+Damos en esta sección una introducción al proceso que lleva un programa en un
+lenguaje de alto nivel como \textit{C} a instrucciones ejecutables en un
+determinado procesador, como será el caso del ARM7TDMI.
+
+Partiendo de un fichero .c de código fuente podemos solicitarle a un compilador 
+(analizaremos en concreto el compilador GCC) que genere un ejecutable, esto es,
+una secuencia de instrucciones del repertorio del procesador (y en binario, en
+código máquina) que realicen lo esperado del propio código del fichero .c. Para esto el compilador realiza una serie de etapas:
+
+\begin{enumerate}
+    \item \textbf{Preprocesado:} 
+    Las directivas al procesador comienzan con '\#' y son del tipo de los
+    \#include \#define ... más en https://es.wikipedia.org/wiki/Preprocesador\_de\_C.
+    
+    \item \textbf{Compilación:}
+    Transforma el código C en lenguaje ensamblador propio de la máquina donde va a 
+    ser ejecutado. En el caso de GCC este se puede consultar.
+    
+    \item \textbf{Ensamblado:}
+    En esta etapa se da el paso de código en ensamblador a código objeto (código
+    máquina). Secuencia de instrucciones ejecutables por el procesador.
+          
+    \item \textbf{Enlazado:}
+    Nos permite unir distintas funciones y funcionalidades que pueden estar presentes
+    en otras zonas de memoria por haberse incluido de librerías propias del lenguaje
+    o de ficheros realizados por el usuario y compilados independientemente.
+    
+\end{enumerate}
+
+Para más información sobre el compilador GCC, sus comandos y sus distintas 
+etapas en la compilación ver [ referencia ].
+https://iie.fing.edu.uy/~vagonbar/gcc-make/gcc.htm\#Sintaxis.
+
+
+\section{Script de enlazado y mapa de memoria}
+
+El mapa de memoria viene a ser la organización y situación final en memoria del 
+programa que nosotros desarrollemos. Esto es, dónde situaremos nuestro puntero
+de pila inicialmente, dónde almacenaremos nuestras variables globales e incluso,
+donde se almacenará nuestro propio programa una vez que sea puramente código
+máquina. El script de enlazado se incluye abajo (será en nuestros proyectos el
+fichero \textit{ld\_script.ld}).
+
+\begin{listing}
+SECTIONS {
+    . = 0x0C000000;
+    .data : {
+      *(.data)
+      *(.rodata)
+}
+.bss : {
+*(.bss)
+*(COMMON) }
+.text : {
+*(.text) }
+    PROVIDE(end = .);
+    PROVIDE(_stack = 0x0C7FF000 );
+}
+\end{listing}
+
+En este indicamos las direcciones en memoria de nuestro fichero ensamblador de 
+instrucciones de inicialización para la ejecución del programa. Este se puede ver
+abajo. Esto la verdad es que no lo entiendo bien bien, vale por una buena tutoría.
+
+\begin{listing}
+.extern main
+.global start
+
+.equ USRSTACK, 0xc7ff000
+
+.text
+start:
+	ldr sp, =USRSTACK
+    mov fp, #0
+    bl main
+
+End:
+    B End
+.end
+\end{listing}
 
 \section{Variables enteras}
 
