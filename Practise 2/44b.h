@@ -36,7 +36,7 @@
 
 /* Bus control */
 #define rSBUSCON	(*(volatile unsigned *)0x1c40000)
-    
+
 /* Memory control */
 #define rBWSCON		(*(volatile unsigned *)0x1c80000)
 #define rBANKCON0	(*(volatile unsigned *)0x1c80004)

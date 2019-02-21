@@ -12,7 +12,7 @@
 **    para el acceso a los leds de la placa de prototipado
 **
 **  Notas de dise�o:
-**    Equivale al fichero hom�nimo usado en Fundamentos de Computadores 
+**    Equivale al fichero hom�nimo usado en Fundamentos de Computadores
 **
 **-----------------------------------------------------------------*/
 
@@ -36,6 +36,9 @@ void leds_init( void )
 {
 	//COMPLETAR usando el interfaz del puerto B definido en gpio.h
 	// hay que configurar los pines 9 y 10 como pines de salida
+
+	portB_conf(9,  OUTPUT);
+	portB_conf(10, OUTPUT);
 
 	leds_display( status );
 }
@@ -84,20 +87,25 @@ void leds_switch( void ){
 void leds_display( unsigned int leds_status )
 {
 	status = leds_status;
-	
+
 	// LED 1
 	if( status & LED1 )
 		//COMPLETAR usando el interfaz del puerto B definido en gpio.h
 		//hay que poner a nivel bajo el bit correspondiente al led 1
+		portB_write(9, LOW);
+
 	else
 		//COMPLETAR usando el interfaz del puerto B definido en gpio.h
 		//hay que poner a nivel alto el bit correspondiente al led 1
+		portB_write(9, HIGH);
 
 	// LED 2
 	if( status & LED2 )
 		//COMPLETAR usando el interfaz del puerto B definido en gpio.h
 		//hay que poner a nivel bajo el bit correspondiente al led 2
+		portB_write(10, LOW);
 	else
 		//COMPLETAR usando el interfaz del puerto B definido en gpio.h
 		//hay que poner a nivel alto el bit correspondiente al led 2
+		portB_write(10, HIGH);
 }

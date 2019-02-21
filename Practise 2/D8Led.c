@@ -4,29 +4,29 @@
 **    D8Led.c  10/6/2014
 **
 **    Estructura de Computadores
-**    Dpto. de Arquitectura de Computadores y Automática
-**    Facultad de Informática. Universidad Complutense de Madrid
+**    Dpto. de Arquitectura de Computadores y AutomÃ¡tica
+**    Facultad de InformÃ¡tica. Universidad Complutense de Madrid
 **
-**  Propósito:
+**  PropÃ³sito:
 **    Contiene las implementaciones de las funciones
 **    para el acceso al display 8-segmentos de la placa de prototipado
 **
-**  Notas de diseño:
-**    Equivale al fichero homónimo usado en Fundamentos de Computadores 
+**  Notas de diseÃ±o:
+**    Equivale al fichero homÃ³nimo usado en Fundamentos de Computadores
 **
 **-----------------------------------------------------------------*/
 
 #include "44b.h"
 #include "D8Led.h"
 
-/* 
+/*
  * Mascaras utiles para el uso del display de 8 segmentos
  * Cada bit representa un segmento. En la mascara ponemos
- * un 1 si queremos que se encienda dicho segmento. Como 
- * el display funciona con logica invertida, nos toca 
+ * un 1 si queremos que se encienda dicho segmento. Como
+ * el display funciona con logica invertida, nos toca
  * invertir el valor al escribir en el puerto.
  */
-#define SEGMENT_A		0x80		
+#define SEGMENT_A		0x80
 #define SEGMENT_B		0x40
 #define SEGMENT_C		0x20
 #define SEGMENT_D		0x08
@@ -58,11 +58,11 @@
 static unsigned int Segments[] = { SEGMENT_A, SEGMENT_B, SEGMENT_C, SEGMENT_D,
 	                               SEGMENT_E, SEGMENT_G, SEGMENT_F, SEGMENT_P };
 
-static unsigned int Digits[] = { DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_3, 
-	 							 DIGIT_4, DIGIT_5, DIGIT_6, DIGIT_7, 
+static unsigned int Digits[] = { DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_3,
+	 							 DIGIT_4, DIGIT_5, DIGIT_6, DIGIT_7,
 								 DIGIT_8, DIGIT_9, DIGIT_A, DIGIT_B,
 								 DIGIT_C, DIGIT_D, DIGIT_E, DIGIT_F };
-			  					  
+
 void D8Led_init(void)
 {
     LED8ADDR = ~0 ;
@@ -72,16 +72,18 @@ void D8Led_segment(int value)
 {
 	if( (value >= 0) && (value < 8) )
 		// COMPLETAR: debemos escribir en el display (LED8ADDR) el valor
-		// correcto para que se ilumine el segmento que está en la posición
+		// correcto para que se ilumine el segmento que estÃ¡ en la posiciÃ³n
 		// value del array Segmentes. Hay que tener en cuente que el display
-		// usa lógica invertida (0 enciende, 1 apaga).
+		// usa lÃ³gica invertida (0 enciende, 1 apaga).
+		LED8ADDR = ~Segments[value];
 }
 
 void D8Led_digit(int value)
 {
 	if( (value >= 0) && (value < 16) )
 		// COMPLETAR: debemos escribir en el display (LED8ADDR) el valor
-		// correcto para que se ilumine el dígito que está en la posición
+		// correcto para que se ilumine el dÃ­gito que estÃ¡ en la posiciÃ³n
 		// value del array Digits. Hay que tener en cuente que el display
-		// usa lógica invertida (0 enciende, 1 apaga).
+		// usa lÃ³gica invertida (0 enciende, 1 apaga).
+		LED8ADDR = ~Digits[value];
 }

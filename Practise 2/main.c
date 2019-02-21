@@ -22,6 +22,8 @@ static struct RLstat RL = {
 	.position = 0,
 };
 
+static int pulsaciones = 0;
+
 int setup(void)
 {
 	leds_init();
@@ -33,10 +35,17 @@ int setup(void)
 	//COMPLETAR: utilizando el interfaz para el puerto G definido en gpio.h hay
 	//que configurar los pines 6 y 7 del puerto G como pines de entrada y
 	//activar las correspondientes resistencias de pull-up
-	
+
+	portG_conf(6, INPUT);
+	portG_conf(7, INPUT);
+
+	portG_conf_pup(6, ENABLE);
+	portG_conf_pup(7, ENABLE);
+
 	/*******************************************/
 
 	Delay(0);
+
 	return 0;
 }
 
@@ -49,6 +58,11 @@ int loop(void)
 		// hay que apagar ambos leds
 		// También hay que comutar la dirección del movimiento del led rotante
 		// representado por el campo direction de la variable RL
+		led1_off();
+		led2_off();
+
+		if(RL.direction) RL.direction = 0;
+		else			 RL.direction = 1;
 	}
 
 	if (buttons & BUT2) {
@@ -58,6 +72,13 @@ int loop(void)
 		// representado por el campo moving de la variable RL, y en caso de
 		// ponerlo en marcha debemos reiniciar el campo iter al valor del campo
 		// speed.
+		pulsaciones++;
+
+		if((pulsaciones%2)==0) 	led1_switch();
+		else					led2_switch();
+
+		if(RL.moving)		RL.moving = 0;
+		else 		   	   {RL.moving = 1; RL.iter = RL.speed;}
 	}
 
 	if (RL.moving) {
@@ -69,7 +90,15 @@ int loop(void)
 			// Recordar que queremos un movimiento circular, representado por
 			// las 6 primeras posiciones en el array Segmentes del display de 8
 			// segmentos, por lo que position debe estar siempre entre 0 y 5.
-			
+
+			if(RL.direction == 1)
+				RL.position = (RL.position+1)%6;
+			else
+				RL.position = (RL.position+5)%6;
+
+			D8Led_segment(RL.position);
+
+			RL.iter = RL.speed;
 		}
 	}
 

@@ -16,7 +16,7 @@
 
     .extern main
 	.global start
-	
+
 	/*
 	** Modos de operaci�n
 	*/
@@ -30,9 +30,9 @@
 	.equ SYSMODE,  0x1f
 
 	/*
-	** Direcciones de las bases de las pilas del sistema 
+	** Direcciones de las bases de las pilas del sistema
 	*/
-	.equ USRSTACK, 0xc7ff000   	
+	.equ USRSTACK, 0xc7ff000
 	.equ SVCSTACK, 0xc7ff100
 	.equ UNDSTACK, 0xc7ff200
 	.equ ABTSTACK, 0xc7ff300
@@ -50,7 +50,7 @@ start:
     mrs	r0, cpsr
     bic	r0, r0, #MODEMASK
     orr	r1, r0, #SVCMODE
-    msr	cpsr_c, r1 
+    msr	cpsr_c, r1
 
 	/* Enmascara interrupciones */
 	ldr r0, =rINTMSK
@@ -61,7 +61,7 @@ start:
 	mrs r0, cpsr
 	bic r0, r0, #0xC0
 	msr cpsr_c, r0
-	
+
 	/* Inicialización de la sección bss a 0, estándar C */
     ldr	    r3, =Image_ZI_Base
 	ldr	    r1, =Image_ZI_Limit	/* Top of zero init segment */
@@ -74,11 +74,11 @@ L0:
 
 	/* Desde modo SVC inicializa los SP de todos los modos de ejecuci�n privilegiados */
     bl InitStacks
-	
+
 	/* Desde modo SVC cambia a modo USR e inicializa el SP_usr */
 	mrs r0, cpsr
 	bic r0, r0, #MODEMASK
-	orr r1, r0, #USRMODE  
+	orr r1, r0, #USRMODE
 	msr cpsr_c, r1
 	ldr sp, =USRSTACK
 
@@ -94,11 +94,11 @@ InitStacks:
 	bic r0, r0, #MODEMASK
 
 	orr r1, r0, #UNDMODE  /* desde modo SVC cambia a modo UND e inicializa el SP_und */
-	msr cpsr_c, r1    
+	msr cpsr_c, r1
 	ldr sp, =UNDSTACK
 
 	orr r1, r0, #ABTMODE  /* desde modo UND cambia a modo ABT e inicializa el SP_abt */
-	msr cpsr_c, r1 
+	msr cpsr_c, r1
 	ldr sp, =ABTSTACK
 
 	orr r1, r0, #IRQMODE  /* desde modo ABT cambia a modo IRQ e inicializa el SP_abt */
@@ -112,8 +112,7 @@ InitStacks:
 	orr r1, r0, #SVCMODE  /* desde modo FIQ cambia a modo SVC e inicializa el SP_svc */
 	msr cpsr_c, r1
 	ldr sp, =SVCSTACK
-	
+
     mov pc, lr
 
 	.end
-
