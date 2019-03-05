@@ -23,8 +23,8 @@ static struct RLstat RL = {
 	.position = 0,
 };
 
-void timer_ISR(void) __attribute__ ((interrupt ("IRQ")));
-void button_ISR(void) __attribute__ ((interrupt ("IRQ")));
+void timer_ISR(void) 	__attribute__ ((interrupt ("IRQ")));
+void button_ISR(void) 	__attribute__ ((interrupt ("IRQ")));
 void keyboard_ISR(void) __attribute__ ((interrupt ("IRQ")));
 
 void timer_ISR(void)
@@ -127,7 +127,7 @@ int setup(void)
 	pISR_EINT1    = //COMPLETAR: registrar la RTI del teclado
 
 	/* Configuración del controlador de interrupciones
-	 * Habilitamos la línea IRQ, en modo vectorizado 
+	 * Habilitamos la línea IRQ, en modo vectorizado
 	 * Configuramos el timer 0 en modo IRQ y habilitamos esta línea
 	 * Configuramos la línea EINT4567 en modo IRQ y la habilitamos
 	 * Configuramos la línea EINT1 en modo IRQ y la habilitamos

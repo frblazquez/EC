@@ -12,7 +12,7 @@
 **    para el acceso al display 8-segmentos de la placa de prototipado
 **
 **  Notas de dise�o:
-**    Equivale al fichero hom�nimo usado en Fundamentos de Computadores 
+**    Equivale al fichero hom�nimo usado en Fundamentos de Computadores
 **
 **-----------------------------------------------------------------*/
 
@@ -72,10 +72,20 @@ void D8Led_segment(int value)
 {
 	if( (value >= 0) && (value < 8) )
 		//COMPLETAR: utilizar el c�digo de prácticas anteirores
+		// COMPLETAR: debemos escribir en el display (LED8ADDR) el valor
+		// correcto para que se ilumine el segmento que está en la posición
+		// value del array Segmentes. Hay que tener en cuente que el display
+		// usa lógica invertida (0 enciende, 1 apaga).
+		LED8ADDR = ~Segments[value];
 }
 
 void D8Led_digit(int value)
 {
 	if( (value >= 0) && (value < 16) )
 		//COMPLETAR: utilizar el c�digo de la prácticas anteirores
+		// COMPLETAR: debemos escribir en el display (LED8ADDR) el valor
+		// correcto para que se ilumine el dígito que está en la posición
+		// value del array Digits. Hay que tener en cuente que el display
+		// usa lógica invertida (0 enciende, 1 apaga).
+		LED8ADDR = ~Digits[value];
 }

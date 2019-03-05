@@ -14,6 +14,7 @@
 **-----------------------------------------------------------------*/
 #ifndef INTCONTROLLER_H
 #define INTCONTROLLER_H
+
 /*--- ficheros de cabecera ---*/
 #include "44b.h"
 
@@ -60,17 +61,11 @@ enum int_line {
 };
 
 void ic_init(void);
-
 int ic_conf_irq(enum enable st, enum int_vec vec);
-
 int ic_conf_fiq(enum enable st);
-
 int ic_conf_line(enum int_line line, enum int_mode mode);
-
 int ic_enable(enum int_line);
-
 int ic_disable(enum int_line);
-
 int ic_cleanflag(enum int_line line);
 
 #endif

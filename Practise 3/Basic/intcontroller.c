@@ -24,9 +24,10 @@ void ic_init(void)
 	 *    Todo por la línea IRQ
 	 *    Todas las interrupciones enmascaradas
 	 **/
-	rINTMOD = 0x0; // Configura las linas como de tipo IRQ
-	rINTCON = 0x7; // IRQ y FIQ enmascaradas, IRQ en modo no vectorizado
-	rINTMSK = ~(0x0); // Enmascara todas las lineas
+
+	rINTMOD = 0x0; 		// Configura las líneas como de tipo IRQ
+	rINTCON = 0x7; 		// IRQ y FIQ enmascaradas, IRQ en modo no vectorizado
+	rINTMSK = ~(0x0); 	// Enmascara todas las lineas
 }
 
 int ic_conf_irq(enum enable st, enum int_vec vec)
@@ -38,14 +39,17 @@ int ic_conf_irq(enum enable st, enum int_vec vec)
 
 	if (vec == VEC)
 		//COMPLETAR: poner la linea IRQ en modo vectorizado
-
+		conf &= ~0x4;
 	else
 		//COMPLETAR: poner la linea IRQ en modo no vectorizado
+		conf |=  0x4;
 
 	if (st == ENABLE)
 		//COMPLETAR: habilitar la linea IRQ
+		conf &= ~0x2;
 	else
 		//COMPLETAR: deshabilitar la linea IRQ
+		conf |=  0x2;
 
 	rINTCON = conf;
 	return 0;
@@ -57,8 +61,10 @@ int ic_conf_fiq(enum enable st)
 
 	if (st == ENABLE)
 		//COMPLETAR: habilitar la linea FIQ
+		rINTCON &= ~0x1;
 	else if (st == DISABLE)
 		//COMPLETAR: deshabilitar la linea FIQ
+		rINTCON |=  0x1;
 	else
 		ret = -1;
 
@@ -77,8 +83,10 @@ int ic_conf_line(enum int_line line, enum int_mode mode)
 
 	if (mode == IRQ)
 		//COMPLETAR: poner la linea line en modo IRQ
+		rINTMOD &= ~bit;
 	else
 		//COMPLETAR: poner la linea line en modo FIQ
+		rINTMOD |=  bit;
 
 	return 0;
 }
@@ -89,6 +97,7 @@ int ic_enable(enum int_line line)
 		return -1;
 
 	//COMPLETAR: habilitar las interrupciones por la linea line
+	rINTMSK &= ~(0x1 << line);
 
 	return 0;
 }
@@ -99,25 +108,27 @@ int ic_disable(enum int_line line)
 		return -1;
 
 	//COMPLETAR: enmascarar las interrupciones por la linea line
+	rINTMSK |=  (0x1 << line);
 	
 	return 0;
 }
 
 int ic_cleanflag(enum int_line line)
 {
-	int bit;
-
 	if (line < 0 || line > 26)
 		return -1;
 
-	bit = INT_BIT(line);
+	int bit = INT_BIT(line);
 
 	if (rINTMOD & bit)
 		//COMPLETAR: borrar el flag de interrupcion correspondiente a la linea line
 		//con la linea configurada por FIQ
+		rF_ISPC |= (0x1 << line);
 	else
 		//COMPLETAR: borrar el flag de interrupcion correspondiente a la linea line
 		//con la linea configurada por IRQ
+		rI_ISPC |= (0x1 << line);
+
 	return 0;
 }
 

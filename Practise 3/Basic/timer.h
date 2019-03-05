@@ -41,19 +41,12 @@ enum tmr_mode {
 };
 
 int tmr_set_prescaler(int p, int  value);
-
 int tmr_set_divider(int d, enum tmr_div div);
-
 int tmr_set_count(enum tmr_timer t, int count, int cmp);
-
 int tmr_set_mode(enum tmr_timer t, enum tmr_mode mode);
-
 int tmr_update(enum tmr_timer t);
-
 int tmr_start(enum tmr_timer t);
-
 int tmr_stop(enum tmr_timer t);
-
 int tmr_isrunning(enum tmr_timer t);
 
 #endif
