@@ -11,7 +11,7 @@
 **    Contiene las implementaciones de las funciones
 **    para la gesti�n de los pulsadores de la placa de prototipado
 **
-**  Notas de dise�o:
+**  Notas de dise�o: Pulsadores
 **
 **-----------------------------------------------------------------*/
 

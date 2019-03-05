@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------
 **
-**  Fichero:
+ **  Fichero:
 **    intcontroller.c  3/3/2016
 **
 **    Estructura de Computadores
@@ -32,26 +32,23 @@ void ic_init(void)
 
 int ic_conf_irq(enum enable st, enum int_vec vec)
 {
-	int conf = rINTCON;
-
 	if (st != ENABLE && st != DISABLE)
 		return -1;
 
 	if (vec == VEC)
 		//COMPLETAR: poner la linea IRQ en modo vectorizado
-		conf &= ~0x4;
+		rINTCON &= ~0x4;
 	else
 		//COMPLETAR: poner la linea IRQ en modo no vectorizado
-		conf |=  0x4;
+		rINTCON |=  0x4;
 
 	if (st == ENABLE)
 		//COMPLETAR: habilitar la linea IRQ
-		conf &= ~0x2;
+		rINTCON &= ~0x2;
 	else
 		//COMPLETAR: deshabilitar la linea IRQ
-		conf |=  0x2;
+		rINTCON |=  0x2;
 
-	rINTCON = conf;
 	return 0;
 }
 

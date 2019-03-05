@@ -114,19 +114,17 @@ int tmr_update(enum tmr_timer t)
 	if (t < 0 || t > 5)
 		return -1;
 
-	int pos = t*4 + 5;
+	int pos;
+
+	if(t == 0) 		pos = 1;
+	else 			pos = t*4 + 5;
 
 	//COMPLETAR: poner a 1 en el registro rTCON el bit indicado por pos 
 	// y justo después ponerlo a 0 (deben ser stores distintos, lo hacemos con
 	// sentencias C distintas)
-	if(t == 0){
-		rTCON |=  (0x1 << 1);
-		rTCON &= ~(0x1 << 1);
-	}
-	else{
-		rTCON |=  (0x1 << pos);
-		rTCON &= ~(0x1 << pos);
-	}
+
+	rTCON |=  (0x1 << pos);
+	rTCON &= ~(0x1 << pos);
 
 	return 0;
 }

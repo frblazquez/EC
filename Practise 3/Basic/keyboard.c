@@ -36,6 +36,14 @@ int kb_scan(void)
 			//      si está el bit 2 a 0 la tecla es la map[i][2]
 			//      si está el bit 3 a 0 la tecla es la map[i][1]
 			//      si está el bit 4 a 0 la tecla es la map[i][0]
+			if(!(temp & 0x1))
+				value = map[i][3];
+			else if(!(temp & 0x2))
+				value = map[i][2];
+			else if(!(temp & 0x4))
+				value = map[i][1];
+			else if(!(temp & 0x8))
+				value = map[i][0];
 		}
 	}
 
