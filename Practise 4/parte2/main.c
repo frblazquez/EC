@@ -9,8 +9,9 @@
 #include "keyboard.h"
 #include "uart.h"
 
-#define N 4 //Tama�o del buffer tmrbuffer
-#define M 128 //Tama�o del buffer readlineBuf que se pasa como par�metro a la rutina readline
+#define N   4 						//Tama�o del buffer tmrbuffer
+#define M   128 					//Tama�o del buffer readlineBuf que se pasa como par�metro a la rutina readline
+#define msg "Introduzca passwd: "
 
 /* Variables para la gesti�n de la ISR del teclado
  *
@@ -187,6 +188,16 @@ int readline(char *buffer, int size)
 	// Los caracteres se leen de uno en uno, utilizando la interfaz
 	// del m�dulo uart, definida en el fichero uart.h
 
+	uart_getch(UART0, &c);
+
+	while(count < size && c != '\r')
+	{
+		buffer[count] = c;
+		count++;
+
+		uart_getch(UART0, &c);
+	}
+
 	return count;
 }
 
@@ -284,6 +295,11 @@ int setup(void)
 		 * 4. Configurar el modo de transmisi�n (POLL o INT) de la uart0
 		 */
 
+	uart_init();
+	uart_lconf(UART0, &uconf);
+	uart_conf_rxmode(UART0, INT);
+	uart_conf_txmode(UART0, INT);
+
 	/***************************************************/
 
 	/* Inicio del juego */
@@ -372,7 +388,17 @@ int loop(void)
 				 *    una E (digito 14) en el display de 8 segmentos y esperamos
 				 *    1 segundo con Delay.
 				 */
-			} while (/* Mientras leamos menos de 4 caracteres*/);
+				uart_send_str(UART0, msg);
+				D8Led_digit(15);
+				count = readline(readlineBuf, M);
+
+				if(count < 4)
+				{
+					D8Led_digit(14);
+					Delay(5000);
+				}
+
+			} while (count < 4/* Mientras leamos menos de 4 caracteres*/);
 
 			/* COMPLETAR: debemos copiar los 4 �ltimos caracteres de readline en
 			 * el buffer guess, haciendo la conversi�n de ascii-hexadecimal a valor

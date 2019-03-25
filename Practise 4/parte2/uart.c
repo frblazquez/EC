@@ -6,7 +6,7 @@
 #include "intcontroller.h"
 
 #define BUFLEN 100
-#define MCLK 64000000
+#define MCLK 64000000	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 // Estructura utilizada para mantener el estado de cada puerto
 struct port_stat {
@@ -52,10 +52,10 @@ void uart_init(void)
 	pISR_URXD0 = Uart0_RxInt;
 
 	//COMPLETAR: Configurar las líneas de interrupción de la uart en modo IRQ
-	ic_conf(INT_URXD0, IRQ);
-	ic_conf(INT_URXD1, IRQ);
-	ic_conf(INT_UTXD0, IRQ);
-	ic_conf(INT_UTXD1, IRQ);
+	ic_conf_line(INT_URXD0, IRQ);
+	ic_conf_line(INT_URXD1, IRQ);
+	ic_conf_line(INT_UTXD0, IRQ);
+	ic_conf_line(INT_UTXD1, IRQ);
 }
 
 /* uart_lconf: Esta función configura el modo línea de la uart,
@@ -102,7 +102,7 @@ int uart_lconf(enum UART port, struct ulconf *lconf)
 		confvalue |= (0x07 << 3);
 
 	// Configuración del modo infrarrojos
-	if(lconf->ired == 0N)
+	if(lconf->ired == ON)
 		confvalue |= (0x01 << 6);
 
 	baud = (int)( MCLK /(16.0 * lconf->baud) + 0.5) - 1;
@@ -301,10 +301,10 @@ static char uart_read(enum UART port)
 
 	//COMPLETAR: Leer un byte del puerto 0, usar la macro RdUTXH0
 	if (port == UART0)
-		c = RdUTXH0();
+		c = RdURXH0();
 	//COMPLETAR: Leer un byte del puerto 1, usar la macro RdUTXH1
 	else
-		c = RdUTXH1();
+		c = RdURXH1();
 
 	if (uport[port].echo == ON) {
 		//COMPLETAR: Esperar a que el puerto esté listo para transmitir
@@ -349,6 +349,7 @@ static void uart_readtobuf(enum UART port)
  */
 static char uart_readfrombuf(enum UART port)
 {
+	char c;
 	struct port_stat *pst = &uport[port];
 
 	/* COMPLETAR:
@@ -360,10 +361,14 @@ static char uart_readfrombuf(enum UART port)
 	 *    buffer)
 	 */
 
-	pst->rP
+	while(pst->rP == pst->wP) /* Intencionado */;
 
-	uart_rx_ready(port);
+	c = pst->ibuf[pst->rP];
 
+	pst->rP++;
+	if(pst->rP == BUFLEN)  pst->rP = 0;
+
+	return c;
 }
 
 /* ISR de recepción por el puerto 0 */
@@ -372,6 +377,7 @@ void Uart0_RxInt(void)
 	uart_readtobuf(UART0);
 
 	//COMPLETAR: borrar el flag de interrupción por recepción en el puerto 0
+	ic_cleanflag(INT_URXD0);
 }
 
 /* ISR de recepción por el puerto 1 */
@@ -380,6 +386,7 @@ void Uart1_RxInt(void)
 	uart_readtobuf(UART1);
 
 	//COMPLETAR: borrar el flag de interrupción por recepción en el puerto 1
+	ic_cleanflag(INT_URXD1);
 }
 
 /* uart_dotxint: rutina invocada por la ISR de transmisión. Su misión es enviar
@@ -400,15 +407,26 @@ static void uart_dotxint(enum UART port)
 			 */
 			//COMPLETAR: enviar \r y esperar a que el puerto quede libre para
 			//enviar
+			uart_write(port, '\r');
+			uart_tx_ready(port);
 		}
 		//COMPLETAR: enviar el carácter apuntado por sendP e incrementar dicho
 		//puntero
+		uart_write(port, *pst->sendP);
+		pst->sendP++;
 	}
 
 	if (*pst->sendP == '\0') {
 		//COMPLETAR: si hemos llegado al final de la cadena de caracteres
 		// deshabilitamos la línea de interrupción por transmisión del puerto
 		// y ponemos el puntero sendP a NULL
+		pst->sendP = NULL;
+
+		if(port == UART0)
+			ic_disable(INT_UTXD0);
+		else
+			ic_disable(INT_UTXD1);
+
 	}
 }
 
@@ -418,6 +436,7 @@ void Uart0_TxInt(void)
 	uart_dotxint(UART0);
 
 	//COMPLETAR: borrar el flag de interrupción por transmisión en el puerto 0
+	ic_cleanflag(INT_UTXD0);
 }
 
 /* ISR de transmisión por el puerto 1 */
@@ -426,6 +445,7 @@ void Uart1_TxInt(void)
 	uart_dotxint(UART1);
 
 	//COMPLETAR: borrar el flag de interrupción por transmisión en el puerto 1
+	ic_cleanflag(INT_UTXD1);
 }
 
 
@@ -441,11 +461,14 @@ int uart_getch(enum UART port, char *c)
 		case POLL:
 			// COMPLETAR: Esperar a que el puerto port haya recibido un byte
 			// Leer dicho byte y escribirlo en la dirección apuntada por c
+			uart_rx_ready(port);
+			*c = uart_read(port);
 			break;
 
 		case INT:
 			// COMPLETAR: Leer el primer byte del buffer de recepción del puerto
 			// y copiarlo en la dirección apuntada por c
+			*c = uart_readfrombuf(port);
 			break;
 
 		case DMA:
@@ -478,6 +501,12 @@ int uart_sendch(enum UART port, char c)
 			 *    que esté listo para transmitir
 			 * 3. Enviamos el carácter c por el puerto
 			 */
+
+			if(c == '\n')
+				uart_sendch(port, '\r');
+
+			uart_tx_ready(port);
+			uart_write(port, c);
 			break;
 
 		case INT:
@@ -511,6 +540,11 @@ int uart_send_str(enum UART port, char *str)
 		case POLL:
 			//COMPLETAR: usar uart_sendch para enviar todos los bytes de la
 			//cadena apuntada por str
+			while(*str != '\0')
+			{
+				uart_sendch(port, *str);
+				str++;
+			}
 			break;
 
 		case INT:
@@ -522,6 +556,15 @@ int uart_send_str(enum UART port, char *str)
 			 * 3. Esperar a que se complete el envío (la ISR pondrá a NULL el
 			 *    puntero de envío sendP)
 			 */
+			uport[port].sendP = str;
+
+			if(port == UART0)
+				ic_enable(INT_UTXD0);
+			else
+				ic_enable(INT_UTXD1);
+
+			while(uport[port].sendP != NULL) /* Intencionado */;
+
 			break;
 
 		case DMA:
